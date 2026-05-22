@@ -8,8 +8,8 @@ workflows:
       flutter: stable
       xcode: latest
       vars:
-        BUNDLE_ID: "com.yourcompany.scout"
-        APP_STORE_APPLE_ID: "0000000000"
+        BUNDLE_ID: "com.flss.scout"
+        APP_STORE_APPLE_ID: "6772134481"
       ios_signing:
         distribution_type: app_store
         bundle_identifier: $BUNDLE_ID
