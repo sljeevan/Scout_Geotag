@@ -1,0 +1,41 @@
+name: sitepin_flutter
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  http: ^1.2.2
+  provider: ^6.1.2
+  shared_preferences: ^2.3.2
+  sqflite: ^2.3.3+1
+  sqflite_common_ffi_web: ^0.4.2+4
+  path: ^1.9.0
+  uuid: ^4.5.1
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  image_picker: ^1.1.2
+  google_maps_flutter: ^2.9.0
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
+  image: ^4.8.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/sitepin_logo.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "../UI/sitepin_app_icon_clean.png"
+  remove_alpha_ios: true
