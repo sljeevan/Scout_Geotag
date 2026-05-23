@@ -6,6 +6,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Scout uses location to capture project geotags.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Scout uses location to capture project geotags while app is in use.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Scout uses camera to capture site photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
