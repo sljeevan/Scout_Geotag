@@ -20,10 +20,20 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _controller;
 
+  bool _isValidCoordinate(double latitude, double longitude) {
+    if (!latitude.isFinite || !longitude.isFinite) return false;
+    if (latitude < -90 || latitude > 90) return false;
+    if (longitude < -180 || longitude > 180) return false;
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final projects = context.watch<ProjectState>().projects;
-    final markers = projects
+    final mappableProjects = projects
+        .where((p) => _isValidCoordinate(p.latitude, p.longitude))
+        .toList();
+    final markers = mappableProjects
         .map(
           (p) => Marker(
             markerId: MarkerId(p.id?.toString() ?? p.projectName),
@@ -39,8 +49,9 @@ class _MapScreenState extends State<MapScreen> {
         )
         .toSet();
 
-    final initial = projects.isNotEmpty
-        ? LatLng(projects.first.latitude, projects.first.longitude)
+    final initial = mappableProjects.isNotEmpty
+        ? LatLng(
+            mappableProjects.first.latitude, mappableProjects.first.longitude)
         : const LatLng(12.9716, 77.5946);
 
     return Padding(
@@ -86,12 +97,12 @@ class _MapScreenState extends State<MapScreen> {
           AppButton(
             label: 'Center To First Project',
             icon: Icons.gps_fixed,
-            onPressed: projects.isEmpty
+            onPressed: mappableProjects.isEmpty
                 ? null
                 : () => _controller?.animateCamera(
                       CameraUpdate.newLatLngZoom(
-                        LatLng(
-                            projects.first.latitude, projects.first.longitude),
+                        LatLng(mappableProjects.first.latitude,
+                            mappableProjects.first.longitude),
                         15,
                       ),
                     ),

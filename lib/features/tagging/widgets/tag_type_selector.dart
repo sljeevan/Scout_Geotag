@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 class TagTypeSelector extends StatelessWidget {
   const TagTypeSelector({
@@ -17,9 +18,16 @@ class TagTypeSelector extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: const InputDecoration(labelText: 'Tag Type'),
+      style: const TextStyle(color: AppColors.textPrimary),
+      dropdownColor: AppColors.surface,
       items: tagTypes
-          .map((tagType) =>
-              DropdownMenuItem(value: tagType, child: Text(tagType)))
+          .map((tagType) => DropdownMenuItem(
+                value: tagType,
+                child: Text(
+                  tagType,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                ),
+              ))
           .toList(),
       onChanged: onChanged,
     );

@@ -106,7 +106,10 @@ class ProfileScreen extends StatelessWidget {
     required UserProfile profile,
     required VoidCallback onEditAvatar,
   }) {
-    final initials = _initials(profile.fullName.isEmpty ? profile.email : profile.fullName);
+    final initials =
+        _initials(profile.fullName.isEmpty ? profile.email : profile.fullName);
+    final avatarUrl = _validatedAvatarUrl(profile.avatarUrl);
+    final hasAvatar = avatarUrl != null;
 
     return Column(
       children: [
@@ -124,10 +127,8 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: CircleAvatar(
                   backgroundColor: const Color(0xFFE9F8ED),
-                  backgroundImage: (profile.avatarUrl ?? '').isEmpty
-                      ? null
-                      : NetworkImage(profile.avatarUrl!),
-                  child: (profile.avatarUrl ?? '').isEmpty
+                  backgroundImage: hasAvatar ? NetworkImage(avatarUrl) : null,
+                  child: !hasAvatar
                       ? Text(
                           initials,
                           style: const TextStyle(
@@ -193,7 +194,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _editProfileButton(BuildContext context, {required VoidCallback onTap}) {
+  Widget _editProfileButton(BuildContext context,
+      {required VoidCallback onTap}) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: onTap,
@@ -265,20 +267,36 @@ class ProfileScreen extends StatelessWidget {
           _infoRow(Icons.mail_outline, const Color(0xFFE9F8ED), AppColors.brand,
               'Email', profile.email),
           _divider(),
-          _infoRow(Icons.call_outlined, const Color(0xFFEAF8F1), AppColors.success,
-              'Phone', _valueOrFallback(profile.phone, '-')),
+          _infoRow(Icons.call_outlined, const Color(0xFFEAF8F1),
+              AppColors.success, 'Phone', _valueOrFallback(profile.phone, '-')),
           _divider(),
-          _infoRow(Icons.apartment_outlined, const Color(0xFFEAF0FD), AppColors.info,
-              'Company', _valueOrFallback(profile.company, '-')),
+          _infoRow(
+              Icons.apartment_outlined,
+              const Color(0xFFEAF0FD),
+              AppColors.info,
+              'Company',
+              _valueOrFallback(profile.company, '-')),
           _divider(),
-          _infoRow(Icons.work_outline, const Color(0xFFF1ECFF), const Color(0xFF7E58C2),
-              'Role', _valueOrFallback(profile.designation, profile.role)),
+          _infoRow(
+              Icons.work_outline,
+              const Color(0xFFF1ECFF),
+              const Color(0xFF7E58C2),
+              'Role',
+              _valueOrFallback(profile.designation, profile.role)),
           _divider(),
-          _infoRow(Icons.badge_outlined, const Color(0xFFF1FAEE), AppColors.warning,
-              'Employee ID', _valueOrFallback(profile.employeeId, '-')),
+          _infoRow(
+              Icons.badge_outlined,
+              const Color(0xFFF1FAEE),
+              AppColors.warning,
+              'Employee ID',
+              _valueOrFallback(profile.employeeId, '-')),
           _divider(),
-          _infoRow(Icons.location_on_outlined, const Color(0xFFFFECEC), const Color(0xFFD94A4A),
-              'Location', _valueOrFallback(profile.location, '-')),
+          _infoRow(
+              Icons.location_on_outlined,
+              const Color(0xFFFFECEC),
+              const Color(0xFFD94A4A),
+              'Location',
+              _valueOrFallback(profile.location, '-')),
         ],
       ),
     );
@@ -298,7 +316,8 @@ class ProfileScreen extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: bg, borderRadius: BorderRadius.circular(12)),
             child: Icon(icon, color: fg, size: 20),
           ),
           const SizedBox(width: 12),
@@ -393,7 +412,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _openEditDialog(BuildContext context, UserProfile profile) async {
+  Future<void> _openEditDialog(
+      BuildContext context, UserProfile profile) async {
     final name = TextEditingController(text: profile.fullName);
     final phone = TextEditingController(text: profile.phone ?? '');
     final company = TextEditingController(text: profile.company ?? '');
@@ -418,17 +438,29 @@ class ProfileScreen extends StatelessWidget {
               const Text('Edit Profile',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
               const SizedBox(height: AppSpacing.x2),
-              TextField(controller: name, decoration: const InputDecoration(labelText: 'Full Name')),
+              TextField(
+                  controller: name,
+                  decoration: const InputDecoration(labelText: 'Full Name')),
               const SizedBox(height: AppSpacing.x1),
-              TextField(controller: designation, decoration: const InputDecoration(labelText: 'Designation')),
+              TextField(
+                  controller: designation,
+                  decoration: const InputDecoration(labelText: 'Designation')),
               const SizedBox(height: AppSpacing.x1),
-              TextField(controller: company, decoration: const InputDecoration(labelText: 'Company')),
+              TextField(
+                  controller: company,
+                  decoration: const InputDecoration(labelText: 'Company')),
               const SizedBox(height: AppSpacing.x1),
-              TextField(controller: phone, decoration: const InputDecoration(labelText: 'Phone')),
+              TextField(
+                  controller: phone,
+                  decoration: const InputDecoration(labelText: 'Phone')),
               const SizedBox(height: AppSpacing.x1),
-              TextField(controller: employeeId, decoration: const InputDecoration(labelText: 'Employee ID')),
+              TextField(
+                  controller: employeeId,
+                  decoration: const InputDecoration(labelText: 'Employee ID')),
               const SizedBox(height: AppSpacing.x1),
-              TextField(controller: location, decoration: const InputDecoration(labelText: 'Location')),
+              TextField(
+                  controller: location,
+                  decoration: const InputDecoration(labelText: 'Location')),
               const SizedBox(height: AppSpacing.x2),
               SizedBox(
                 width: double.infinity,
@@ -505,8 +537,11 @@ class ProfileScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       labelText: 'Current Password',
                       suffixIcon: IconButton(
-                        onPressed: () => setLocal(() => obscureCurrent = !obscureCurrent),
-                        icon: Icon(obscureCurrent ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () =>
+                            setLocal(() => obscureCurrent = !obscureCurrent),
+                        icon: Icon(obscureCurrent
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                       ),
                     ),
                   ),
@@ -518,8 +553,11 @@ class ProfileScreen extends StatelessWidget {
                       labelText: 'New Password',
                       helperText: 'Minimum 8 characters',
                       suffixIcon: IconButton(
-                        onPressed: () => setLocal(() => obscureNew = !obscureNew),
-                        icon: Icon(obscureNew ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () =>
+                            setLocal(() => obscureNew = !obscureNew),
+                        icon: Icon(obscureNew
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                       ),
                     ),
                   ),
@@ -530,8 +568,11 @@ class ProfileScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       labelText: 'Confirm New Password',
                       suffixIcon: IconButton(
-                        onPressed: () => setLocal(() => obscureConfirm = !obscureConfirm),
-                        icon: Icon(obscureConfirm ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () =>
+                            setLocal(() => obscureConfirm = !obscureConfirm),
+                        icon: Icon(obscureConfirm
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                       ),
                     ),
                   ),
@@ -557,20 +598,26 @@ class ProfileScreen extends StatelessWidget {
                         final current = currentPassword.text.trim();
                         final next = newPassword.text.trim();
                         final confirm = confirmPassword.text.trim();
-                        if (current.isEmpty || next.isEmpty || confirm.isEmpty) {
-                          setLocal(() => formError = 'All password fields are required.');
+                        if (current.isEmpty ||
+                            next.isEmpty ||
+                            confirm.isEmpty) {
+                          setLocal(() =>
+                              formError = 'All password fields are required.');
                           return;
                         }
                         if (next.length < 8) {
-                          setLocal(() => formError = 'New password must be at least 8 characters.');
+                          setLocal(() => formError =
+                              'New password must be at least 8 characters.');
                           return;
                         }
                         if (next != confirm) {
-                          setLocal(() => formError = 'New password and confirmation do not match.');
+                          setLocal(() => formError =
+                              'New password and confirmation do not match.');
                           return;
                         }
                         if (current == next) {
-                          setLocal(() => formError = 'New password must be different from current password.');
+                          setLocal(() => formError =
+                              'New password must be different from current password.');
                           return;
                         }
                         Navigator.pop(ctx, true);
@@ -604,7 +651,8 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _pickAndUploadAvatar(BuildContext context, UserProfile profile) async {
+  Future<void> _pickAndUploadAvatar(
+      BuildContext context, UserProfile profile) async {
     final picked = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       imageQuality: 75,
@@ -645,9 +693,23 @@ class ProfileScreen extends StatelessWidget {
   }
 
   static String _initials(String text) {
-    final parts = text.trim().split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
+    final parts =
+        text.trim().split(RegExp(r'\s+')).where((e) => e.isNotEmpty).toList();
     if (parts.isEmpty) return 'U';
     if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
     return (parts[0].substring(0, 1) + parts[1].substring(0, 1)).toUpperCase();
+  }
+
+  static String? _validatedAvatarUrl(String? raw) {
+    if (raw == null) return null;
+    final value = raw.trim();
+    if (value.isEmpty) return null;
+    final uri = Uri.tryParse(value);
+    if (uri == null) return null;
+    if ((uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty) {
+      return value;
+    }
+    return null;
   }
 }

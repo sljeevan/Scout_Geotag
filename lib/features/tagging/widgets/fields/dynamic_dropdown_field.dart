@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../theme/app_colors.dart';
 
 class DynamicDropdownField extends StatelessWidget {
   const DynamicDropdownField({
@@ -21,8 +22,18 @@ class DynamicDropdownField extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(labelText: label, errorText: errorText),
+      style: const TextStyle(color: AppColors.textPrimary),
+      dropdownColor: AppColors.surface,
       items: options
-          .map((option) => DropdownMenuItem(value: option, child: Text(option)))
+          .map(
+            (option) => DropdownMenuItem(
+              value: option,
+              child: Text(
+                option,
+                style: const TextStyle(color: AppColors.textPrimary),
+              ),
+            ),
+          )
           .toList(),
       onChanged: onChanged,
     );

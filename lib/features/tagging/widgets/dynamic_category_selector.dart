@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
 
 class DynamicCategorySelector extends StatelessWidget {
   const DynamicCategorySelector({
@@ -17,9 +18,16 @@ class DynamicCategorySelector extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: const InputDecoration(labelText: 'Category'),
+      style: const TextStyle(color: AppColors.textPrimary),
+      dropdownColor: AppColors.surface,
       items: categories
-          .map((category) =>
-              DropdownMenuItem(value: category, child: Text(category)))
+          .map((category) => DropdownMenuItem(
+                value: category,
+                child: Text(
+                  category,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                ),
+              ))
           .toList(),
       onChanged: onChanged,
     );
