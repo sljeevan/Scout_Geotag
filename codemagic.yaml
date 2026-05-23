@@ -14,7 +14,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: $BUNDLE_ID
       groups:
-        - app_store_credentials
+        - Scout_geotag
 
     scripts:
       - name: Fetch signing files
