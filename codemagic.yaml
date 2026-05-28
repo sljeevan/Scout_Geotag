@@ -1,4 +1,40 @@
 workflows:
+  ios-simulator:
+    name: iOS Simulator Build
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+
+    environment:
+      flutter: stable
+      xcode: latest
+      vars:
+        GOOGLE_MAPS_API_KEY: "AIzaSyCFJ7yMixjLHmIln6uUYUn-I2FTq1qzT2A"
+      groups:
+        - Scout_geotag
+
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+
+      - name: Configure Google Maps for iOS
+        script: |
+          if [ -z "${GOOGLE_MAPS_API_KEY:-}" ]; then
+            echo "GOOGLE_MAPS_API_KEY is required in the Scout_geotag Codemagic group."
+            exit 1
+          fi
+          printf '#include "Generated.xcconfig"\nGOOGLE_MAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY" > ios/Flutter/Debug.xcconfig
+          printf '#include "Generated.xcconfig"\nGOOGLE_MAPS_API_KEY=%s\n' "$GOOGLE_MAPS_API_KEY" > ios/Flutter/Release.xcconfig
+
+      - name: Build unsigned simulator app
+        script: |
+          flutter build ios --simulator --debug
+
+    artifacts:
+      - build/ios/iphonesimulator/Runner.app
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+
   ios-testflight:
     name: iOS TestFlight Build
     max_build_duration: 120
