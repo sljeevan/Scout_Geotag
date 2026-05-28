@@ -9,21 +9,37 @@ import 'app_typography.dart';
 abstract final class AppTheme {
   static ThemeData get light {
     final base = ThemeData(useMaterial3: true, brightness: Brightness.light);
+    final baseTextTheme = base.textTheme.apply(
+      bodyColor: AppColors.textPrimary,
+      displayColor: AppColors.textPrimary,
+    );
 
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.bg,
       colorScheme: const ColorScheme.light(
         primary: AppColors.brand,
+        onPrimary: AppColors.onBrand,
         secondary: AppColors.brandStrong,
+        onSecondary: AppColors.onBrand,
         surface: AppColors.surface,
+        onSurface: AppColors.textPrimary,
         error: AppColors.danger,
+        onError: AppColors.onBrand,
       ),
-      textTheme: const TextTheme(
+      textTheme: baseTextTheme.copyWith(
         headlineLarge: AppTypography.headline,
         titleLarge: AppTypography.title,
+        titleMedium: AppTypography.title.copyWith(fontSize: 16),
+        bodyLarge: AppTypography.body.copyWith(color: AppColors.textPrimary),
         bodyMedium: AppTypography.body,
+        labelLarge: AppTypography.label.copyWith(color: AppColors.textPrimary),
         labelMedium: AppTypography.label,
         bodySmall: AppTypography.caption,
+      ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.textPrimary,
+        selectionColor: AppColors.border,
+        selectionHandleColor: AppColors.brandStrong,
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: false,
@@ -46,6 +62,14 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
         ),
+        floatingLabelStyle: const TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+        ),
+        hintStyle: const TextStyle(color: AppColors.textMuted),
+        errorStyle: const TextStyle(color: AppColors.danger),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: const BorderSide(color: AppColors.border, width: 1.5),

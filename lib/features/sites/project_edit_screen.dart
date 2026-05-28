@@ -6,6 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../core/widgets/app_button.dart';
 import '../../data/models/project_models.dart';
+import '../../features/map/map_utils.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
 class ProjectEditScreen extends StatefulWidget {
@@ -38,8 +40,10 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
     _name = TextEditingController(text: widget.project.projectName);
     _client = TextEditingController(text: widget.project.developer ?? '');
     _remarks = TextEditingController(text: widget.project.remarks ?? '');
-    _lat = widget.project.latitude;
-    _lng = widget.project.longitude;
+    final target =
+        safeMapTarget(widget.project.latitude, widget.project.longitude);
+    _lat = target.latitude;
+    _lng = target.longitude;
     _latitude = TextEditingController(text: _lat.toStringAsFixed(6));
     _longitude = TextEditingController(text: _lng.toStringAsFixed(6));
     _segment = widget.project.segment;
@@ -53,6 +57,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
     _remarks.dispose();
     _latitude.dispose();
     _longitude.dispose();
+    _mapController?.dispose();
     super.dispose();
   }
 
@@ -77,6 +82,7 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
   }
 
   void _updateLatLng(double lat, double lng, {bool animate = false}) {
+    if (!isValidMapCoordinate(lat, lng)) return;
     setState(() {
       _lat = lat;
       _lng = lng;
@@ -136,7 +142,8 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
           const SizedBox(height: AppSpacing.x1),
           TextField(
             controller: _client,
-            decoration: const InputDecoration(labelText: 'Project Owner / Client'),
+            decoration:
+                const InputDecoration(labelText: 'Project Owner / Client'),
           ),
           const SizedBox(height: AppSpacing.x2),
           ClipRRect(
@@ -145,12 +152,13 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
               height: 230,
               child: GoogleMap(
                 initialCameraPosition:
-                    CameraPosition(target: LatLng(_lat, _lng), zoom: 15),
+                    CameraPosition(target: safeMapTarget(_lat, _lng), zoom: 15),
                 onMapCreated: (c) => _mapController = c,
                 markers: {marker},
-                myLocationEnabled: true,
+                myLocationEnabled: false,
                 myLocationButtonEnabled: false,
-                onTap: (latLng) => _updateLatLng(latLng.latitude, latLng.longitude),
+                onTap: (latLng) =>
+                    _updateLatLng(latLng.latitude, latLng.longitude),
                 gestureRecognizers: {
                   Factory<OneSequenceGestureRecognizer>(
                     () => EagerGestureRecognizer(),
@@ -188,10 +196,14 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
           const SizedBox(height: AppSpacing.x1),
           DropdownButtonFormField<String>(
             value: _segment,
+            style: const TextStyle(color: AppColors.textPrimary),
+            dropdownColor: AppColors.surface,
             items: const [
               DropdownMenuItem(value: 'Commercial', child: Text('Commercial')),
-              DropdownMenuItem(value: 'Residential', child: Text('Residential')),
-              DropdownMenuItem(value: 'Hospitality', child: Text('Hospitality')),
+              DropdownMenuItem(
+                  value: 'Residential', child: Text('Residential')),
+              DropdownMenuItem(
+                  value: 'Hospitality', child: Text('Hospitality')),
               DropdownMenuItem(value: 'Retail', child: Text('Retail')),
               DropdownMenuItem(value: 'Pvt Homes', child: Text('Pvt Homes')),
             ],
@@ -201,6 +213,8 @@ class _ProjectEditScreenState extends State<ProjectEditScreen> {
           const SizedBox(height: AppSpacing.x1),
           DropdownButtonFormField<String>(
             value: _status,
+            style: const TextStyle(color: AppColors.textPrimary),
+            dropdownColor: AppColors.surface,
             items: const [
               DropdownMenuItem(value: 'Active', child: Text('Active')),
               DropdownMenuItem(value: 'On Hold', child: Text('On Hold')),

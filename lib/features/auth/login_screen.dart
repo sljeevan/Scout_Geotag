@@ -78,6 +78,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: AppSpacing.x2),
                               DropdownButtonFormField<String>(
                                 initialValue: _role,
+                                style: const TextStyle(
+                                    color: AppColors.textPrimary),
+                                dropdownColor: AppColors.surface,
                                 items: const [
                                   DropdownMenuItem(
                                       value: 'user', child: Text('User')),
@@ -135,7 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: AppSpacing.x2),
                               Text(
                                 auth.notice!,
-                                style: const TextStyle(color: AppColors.success),
+                                style:
+                                    const TextStyle(color: AppColors.success),
                               ),
                             ],
                             const SizedBox(height: AppSpacing.x2),

@@ -117,6 +117,8 @@ class _GeoTagScreenState extends State<GeoTagScreen> {
                 const SizedBox(height: AppSpacing.x2),
                 DropdownButtonFormField<String>(
                   initialValue: _segment,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  dropdownColor: AppColors.surface,
                   items: const [
                     DropdownMenuItem(
                         value: 'Commercial', child: Text('Commercial')),
@@ -129,6 +131,8 @@ class _GeoTagScreenState extends State<GeoTagScreen> {
                 const SizedBox(height: AppSpacing.x2),
                 DropdownButtonFormField<String>(
                   initialValue: _status,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  dropdownColor: AppColors.surface,
                   items: const [
                     DropdownMenuItem(value: 'Active', child: Text('Active')),
                     DropdownMenuItem(value: 'On Hold', child: Text('On Hold')),
@@ -144,6 +148,8 @@ class _GeoTagScreenState extends State<GeoTagScreen> {
                   const SizedBox(height: AppSpacing.x2),
                   DropdownButtonFormField<String>(
                     initialValue: _outcome,
+                    style: const TextStyle(color: AppColors.textPrimary),
+                    dropdownColor: AppColors.surface,
                     items: const [
                       DropdownMenuItem(value: 'WON', child: Text('WON')),
                       DropdownMenuItem(value: 'LOST', child: Text('LOST')),

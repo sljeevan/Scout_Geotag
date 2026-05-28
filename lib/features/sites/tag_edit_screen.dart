@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../core/widgets/app_button.dart';
 import '../../data/models/tag_entry.dart';
+import '../../features/map/map_utils.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../tagging/config/form_config.dart';
 import '../tagging/config/tag_constants.dart';
@@ -44,8 +46,9 @@ class _TagEditScreenState extends State<TagEditScreen> {
     _phone = TextEditingController(text: widget.tag.phone ?? '');
     _email = TextEditingController(text: widget.tag.email ?? '');
     _address = TextEditingController(text: widget.tag.address ?? '');
-    _lat = widget.tag.latitude;
-    _lng = widget.tag.longitude;
+    final target = safeMapTarget(widget.tag.latitude, widget.tag.longitude);
+    _lat = target.latitude;
+    _lng = target.longitude;
     _latitude = TextEditingController(text: _lat.toStringAsFixed(6));
     _longitude = TextEditingController(text: _lng.toStringAsFixed(6));
     _category = widget.tag.category;
@@ -60,6 +63,7 @@ class _TagEditScreenState extends State<TagEditScreen> {
     _address.dispose();
     _latitude.dispose();
     _longitude.dispose();
+    _mapController?.dispose();
     super.dispose();
   }
 
@@ -86,6 +90,7 @@ class _TagEditScreenState extends State<TagEditScreen> {
   }
 
   void _updateLatLng(double lat, double lng, {bool animate = false}) {
+    if (!isValidMapCoordinate(lat, lng)) return;
     setState(() {
       _lat = lat;
       _lng = lng;
@@ -178,12 +183,13 @@ class _TagEditScreenState extends State<TagEditScreen> {
               height: 230,
               child: GoogleMap(
                 initialCameraPosition:
-                    CameraPosition(target: LatLng(_lat, _lng), zoom: 15),
+                    CameraPosition(target: safeMapTarget(_lat, _lng), zoom: 15),
                 onMapCreated: (c) => _mapController = c,
                 markers: {marker},
-                myLocationEnabled: true,
+                myLocationEnabled: false,
                 myLocationButtonEnabled: false,
-                onTap: (latLng) => _updateLatLng(latLng.latitude, latLng.longitude),
+                onTap: (latLng) =>
+                    _updateLatLng(latLng.latitude, latLng.longitude),
                 gestureRecognizers: {
                   Factory<OneSequenceGestureRecognizer>(
                     () => EagerGestureRecognizer(),
@@ -221,6 +227,8 @@ class _TagEditScreenState extends State<TagEditScreen> {
           const SizedBox(height: AppSpacing.x1),
           DropdownButtonFormField<String>(
             value: _category,
+            style: const TextStyle(color: AppColors.textPrimary),
+            dropdownColor: AppColors.surface,
             items: categories
                 .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                 .toList(),

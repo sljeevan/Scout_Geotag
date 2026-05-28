@@ -9,6 +9,7 @@ import '../../state/project_state.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../sites/site_detail_screen.dart';
+import 'map_utils.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -20,18 +21,17 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _controller;
 
-  bool _isValidCoordinate(double latitude, double longitude) {
-    if (!latitude.isFinite || !longitude.isFinite) return false;
-    if (latitude < -90 || latitude > 90) return false;
-    if (longitude < -180 || longitude > 180) return false;
-    return true;
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final projects = context.watch<ProjectState>().projects;
     final mappableProjects = projects
-        .where((p) => _isValidCoordinate(p.latitude, p.longitude))
+        .where((p) => isValidMapCoordinate(p.latitude, p.longitude))
         .toList();
     final markers = mappableProjects
         .map(
@@ -50,9 +50,11 @@ class _MapScreenState extends State<MapScreen> {
         .toSet();
 
     final initial = mappableProjects.isNotEmpty
-        ? LatLng(
-            mappableProjects.first.latitude, mappableProjects.first.longitude)
-        : const LatLng(12.9716, 77.5946);
+        ? safeMapTarget(
+            mappableProjects.first.latitude,
+            mappableProjects.first.longitude,
+          )
+        : fallbackMapTarget;
 
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.x3),
@@ -73,7 +75,8 @@ class _MapScreenState extends State<MapScreen> {
                     CameraPosition(target: initial, zoom: 11),
                 onMapCreated: (c) => _controller = c,
                 markers: markers,
-                myLocationEnabled: true,
+                myLocationEnabled: false,
+                myLocationButtonEnabled: false,
               ),
             ),
           ),
