@@ -10,6 +10,7 @@ workflows:
       vars:
         BUNDLE_ID: "com.flss.scout"
         APP_STORE_APPLE_ID: "6772134481"
+        GOOGLE_MAPS_API_KEY: "AIzaSyCFJ7yMixjLHmIln6uUYUn-I2FTq1qzT2A"
       ios_signing:
         distribution_type: app_store
         bundle_identifier: $BUNDLE_ID
